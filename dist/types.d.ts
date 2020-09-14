@@ -98,6 +98,7 @@ export interface HookState {
     auth2?: gapi.auth2.GoogleAuth;
     isSignedIn: boolean;
     isInitialized: boolean;
+    error?: any;
 }
 export interface HookReturnValue extends HookState {
     signIn: (options?: gapi.auth2.SigninOptions) => Promise<GoogleUser | undefined>;

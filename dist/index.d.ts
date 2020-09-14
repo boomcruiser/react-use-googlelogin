@@ -8,4 +8,4 @@ export declare type GoogleLoginHookReturnValue = HookReturnValue;
  * @returns The `GoogleUser` instance with properties to work with Google
  * client authentication.
  */
-export declare const useGoogleLogin: ({ clientId, hostedDomain, handleError, redirectUri, scope, cookiePolicy, fetchBasicProfile, uxMode, persist, }: HookConfig) => HookReturnValue;
+export declare const useGoogleLogin: ({ clientId, hostedDomain, redirectUri, scope, cookiePolicy, fetchBasicProfile, uxMode, persist, }: HookConfig) => HookReturnValue;

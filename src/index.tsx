@@ -55,7 +55,6 @@ const getAdditionalUserData = (
 export const useGoogleLogin = ({
   clientId,
   hostedDomain,
-  handleError,
   redirectUri,
   scope = 'profile email openid',
   cookiePolicy = 'single_host_origin',
@@ -276,7 +275,13 @@ export const useGoogleLogin = ({
           setState({ googleUser, auth2, isSignedIn, isInitialized: true })
         },
         (err: any) => {
-          handleError(err)
+          setState({
+            googleUser: undefined,
+            auth2: undefined,
+            isSignedIn: false,
+            isInitialized: false,
+            error: err,
+          })
         }
       )
     }

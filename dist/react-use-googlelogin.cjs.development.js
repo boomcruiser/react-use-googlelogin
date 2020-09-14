@@ -106,7 +106,6 @@ var getAdditionalUserData = function getAdditionalUserData(user, fetchBasicProfi
 var useGoogleLogin = function useGoogleLogin(_ref) {
   var clientId = _ref.clientId,
       hostedDomain = _ref.hostedDomain,
-      handleError = _ref.handleError,
       redirectUri = _ref.redirectUri,
       _ref$scope = _ref.scope,
       scope = _ref$scope === void 0 ? 'profile email openid' : _ref$scope,
@@ -331,7 +330,13 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
           isInitialized: true
         });
       }, function (err) {
-        handleError(err);
+        setState({
+          googleUser: undefined,
+          auth2: undefined,
+          isSignedIn: false,
+          isInitialized: false,
+          error: err
+        });
       });
     };
 
