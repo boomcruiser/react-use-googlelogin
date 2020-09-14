@@ -99,6 +99,7 @@ export interface HookConfig {
    * Toggle whether `googleUser` should be persisted from `sessionStorage` on page refresh.
    */
   persist?: boolean
+  handleError?: any
 }
 
 export interface TokenObj {

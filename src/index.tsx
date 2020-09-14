@@ -55,6 +55,7 @@ const getAdditionalUserData = (
 export const useGoogleLogin = ({
   clientId,
   hostedDomain,
+  handleError,
   redirectUri,
   scope = 'profile email openid',
   cookiePolicy = 'single_host_origin',
@@ -260,19 +261,24 @@ export const useGoogleLogin = ({
      * As a result, `Promise.resolve()` or `await` will cause infinite recursion.
      */
     const handleLoad = () => {
-      window.gapi.auth2.init(config).then(auth2 => {
-        const googleUser = auth2.currentUser.get()
-        const isSignedIn = googleUser.isSignedIn()
-        auth2.currentUser.listen(handleAuthChange)
+      window.gapi.auth2.init(config).then(
+        auth2 => {
+          const googleUser = auth2.currentUser.get()
+          const isSignedIn = googleUser.isSignedIn()
+          auth2.currentUser.listen(handleAuthChange)
 
-        if (!persist) {
-          signOut()
-          return
+          if (!persist) {
+            signOut()
+            return
+          }
+
+          if (isSignedIn) getAdditionalUserData(googleUser, fetchBasicProfile)
+          setState({ googleUser, auth2, isSignedIn, isInitialized: true })
+        },
+        (err: any) => {
+          handleError(err)
         }
-
-        if (isSignedIn) getAdditionalUserData(googleUser, fetchBasicProfile)
-        setState({ googleUser, auth2, isSignedIn, isInitialized: true })
-      })
+      )
     }
 
     window.gapi.load('auth2', handleLoad)
