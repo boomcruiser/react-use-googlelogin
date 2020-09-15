@@ -219,15 +219,15 @@ export const useGoogleLogin = ({
 
   // Authorization scopes required by the API; multiple scopes can be
   // included, separated by spaces.
-  var SCOPES = 'https://www.googleapis.com/auth/calendar.events'
+  // var SCOPES = 'https://www.googleapis.com/auth/calendar.events'
 
   const initClient = () => {
     gapi.client
       .init({
         apiKey,
-        clientId,
+        // clientId,
         discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES,
+        // scope: SCOPES,
       })
       .then(
         function() {
