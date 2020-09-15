@@ -102,7 +102,7 @@ export interface HookState {
     auth2?: gapi.auth2.GoogleAuth;
     isSignedIn: boolean;
     isInitialized: boolean;
-    calendarInitialized?: boolean;
+    clientInitialized?: boolean;
     error?: any;
 }
 export interface HookReturnValue extends HookState {

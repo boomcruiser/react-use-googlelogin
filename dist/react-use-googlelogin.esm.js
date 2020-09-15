@@ -120,7 +120,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
     googleUser: undefined,
     auth2: undefined,
     isSignedIn: false,
-    calendarInitialized: false,
+    clientInitialized: false,
     isInitialized: false
   }),
       state = _useState[0],
@@ -271,19 +271,17 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
 
   var DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest']; // Authorization scopes required by the API; multiple scopes can be
   // included, separated by spaces.
-
-  var SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+  // var SCOPES = 'https://www.googleapis.com/auth/calendar.events'
 
   var initClient = function initClient() {
     gapi.client.init({
       apiKey: apiKey,
-      clientId: clientId,
-      discoveryDocs: DISCOVERY_DOCS,
-      scope: SCOPES
+      // clientId,
+      discoveryDocs: DISCOVERY_DOCS
     }).then(function () {
       console.log('calendar init');
       setState(_extends({}, state, {
-        calendarInitialized: true
+        clientInitialized: true
       }));
     }, function (error) {
       console.log({

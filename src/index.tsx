@@ -69,7 +69,7 @@ export const useGoogleLogin = ({
     googleUser: undefined,
     auth2: undefined,
     isSignedIn: false,
-    calendarInitialized: false,
+    clientInitialized: false,
     isInitialized: false,
   })
   const latestAccessTokenRef = useRef<string | undefined>(undefined)
@@ -232,7 +232,7 @@ export const useGoogleLogin = ({
       .then(
         function() {
           console.log('calendar init')
-          setState({ ...state, calendarInitialized: true })
+          setState({ ...state, clientInitialized: true })
         },
         function(error) {
           console.log({ error })
