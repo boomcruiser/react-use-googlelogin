@@ -281,6 +281,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
       discoveryDocs: DISCOVERY_DOCS,
       scope: SCOPES
     }).then(function () {
+      console.log('calendar init');
       setState(_extends({}, state, {
         calendarInitialized: true
       }));
@@ -301,7 +302,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
     var auth2 = window.gapi.auth2.getAuthInstance(); // If `tokenId` is present, we've already performed this step so skip it.
 
     if (isSignedIn && !googleUser.tokenId) getAdditionalUserData(googleUser, fetchBasicProfile);
-    setState({
+    setState(_extends({}, state, {
       auth2: auth2,
       googleUser: isSignedIn ? _extends({}, googleUser, {
         accessToken: (_latestAccessTokenRef = latestAccessTokenRef.current) !== null && _latestAccessTokenRef !== void 0 ? _latestAccessTokenRef : googleUser.accessToken,
@@ -313,7 +314,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
       }) : undefined,
       isSignedIn: isSignedIn,
       isInitialized: true
-    });
+    }));
   };
 
   useExternalScript(DOM_ID, GOOGLE_API_URL, function () {
@@ -346,20 +347,20 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
         }
 
         if (isSignedIn) getAdditionalUserData(googleUser, fetchBasicProfile);
-        setState({
+        setState(_extends({}, state, {
           googleUser: googleUser,
           auth2: auth2,
           isSignedIn: isSignedIn,
           isInitialized: true
-        });
+        }));
       }, function (err) {
-        setState({
+        setState(_extends({}, state, {
           googleUser: undefined,
           auth2: undefined,
           isSignedIn: false,
           isInitialized: false,
           error: err
-        });
+        }));
       });
       gapi.load('client:auth2', initClient);
     };
