@@ -231,6 +231,7 @@ export const useGoogleLogin = ({
       })
       .then(
         function() {
+          console.log('calendar init')
           setState({ ...state, calendarInitialized: true })
         },
         function(error) {
@@ -249,6 +250,7 @@ export const useGoogleLogin = ({
       getAdditionalUserData(googleUser, fetchBasicProfile)
 
     setState({
+      ...state,
       auth2,
       googleUser: isSignedIn
         ? {
@@ -266,6 +268,7 @@ export const useGoogleLogin = ({
           }
         : undefined,
       isSignedIn,
+
       isInitialized: true,
     })
   }
@@ -301,10 +304,17 @@ export const useGoogleLogin = ({
           }
 
           if (isSignedIn) getAdditionalUserData(googleUser, fetchBasicProfile)
-          setState({ googleUser, auth2, isSignedIn, isInitialized: true })
+          setState({
+            ...state,
+            googleUser,
+            auth2,
+            isSignedIn,
+            isInitialized: true,
+          })
         },
         (err: any) => {
           setState({
+            ...state,
             googleUser: undefined,
             auth2: undefined,
             isSignedIn: false,
