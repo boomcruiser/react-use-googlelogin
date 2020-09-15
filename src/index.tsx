@@ -56,6 +56,7 @@ export const useGoogleLogin = ({
   clientId,
   hostedDomain,
   redirectUri,
+  apiKey,
   scope = 'profile email openid',
   cookiePolicy = 'single_host_origin',
   fetchBasicProfile = true,
@@ -68,6 +69,7 @@ export const useGoogleLogin = ({
     googleUser: undefined,
     auth2: undefined,
     isSignedIn: false,
+    calendarInitialized: false,
     isInitialized: false,
   })
   const latestAccessTokenRef = useRef<string | undefined>(undefined)
@@ -211,6 +213,33 @@ export const useGoogleLogin = ({
    *
    * @param googleUser GoogleUser object from the `currentUser` property.
    */
+  var DISCOVERY_DOCS = [
+    'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+  ]
+
+  // Authorization scopes required by the API; multiple scopes can be
+  // included, separated by spaces.
+  var SCOPES = 'https://www.googleapis.com/auth/calendar.events'
+
+  const initClient = () => {
+    gapi.client
+      .init({
+        apiKey,
+        clientId,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES,
+      })
+      .then(
+        function() {
+          setState({ ...state, calendarInitialized: true })
+        },
+        function(error) {
+          console.log({ error })
+          setState({ ...state, error })
+          // appendPre(JSON.stringify(error, null, 2))
+        }
+      )
+  }
   const handleAuthChange = (googleUser: GoogleUser) => {
     const isSignedIn = googleUser.isSignedIn()
     const auth2 = window.gapi.auth2.getAuthInstance()
@@ -284,6 +313,7 @@ export const useGoogleLogin = ({
           })
         }
       )
+      gapi.load('client:auth2', initClient)
     }
 
     window.gapi.load('auth2', handleLoad)

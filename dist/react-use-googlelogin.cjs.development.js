@@ -107,6 +107,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
   var clientId = _ref.clientId,
       hostedDomain = _ref.hostedDomain,
       redirectUri = _ref.redirectUri,
+      apiKey = _ref.apiKey,
       _ref$scope = _ref.scope,
       scope = _ref$scope === void 0 ? 'profile email openid' : _ref$scope,
       _ref$cookiePolicy = _ref.cookiePolicy,
@@ -123,6 +124,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
     googleUser: undefined,
     auth2: undefined,
     isSignedIn: false,
+    calendarInitialized: false,
     isInitialized: false
   }),
       state = _useState[0],
@@ -271,6 +273,31 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
    */
 
 
+  var DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest']; // Authorization scopes required by the API; multiple scopes can be
+  // included, separated by spaces.
+
+  var SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+
+  var initClient = function initClient() {
+    gapi.client.init({
+      apiKey: apiKey,
+      clientId: clientId,
+      discoveryDocs: DISCOVERY_DOCS,
+      scope: SCOPES
+    }).then(function () {
+      setState(_extends({}, state, {
+        calendarInitialized: true
+      }));
+    }, function (error) {
+      console.log({
+        error: error
+      });
+      setState(_extends({}, state, {
+        error: error
+      })); // appendPre(JSON.stringify(error, null, 2))
+    });
+  };
+
   var handleAuthChange = function handleAuthChange(googleUser) {
     var _latestAccessTokenRef, _latestExpiresAtRef$c, _latestAccessTokenRef2, _latestExpiresAtRef$c2;
 
@@ -338,6 +365,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
           error: err
         });
       });
+      gapi.load('client:auth2', initClient);
     };
 
     window.gapi.load('auth2', handleLoad);

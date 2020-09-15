@@ -45,6 +45,10 @@ export interface HookConfig {
      */
     clientId: string;
     /**
+     * The apikey for calendar
+     */
+    apiKey: string;
+    /**
      * The domains for which to create sign-in cookies. Must be a URI, `single_host_origin`, or `none`.
      *
      * @default `single_host_origin`
@@ -98,6 +102,7 @@ export interface HookState {
     auth2?: gapi.auth2.GoogleAuth;
     isSignedIn: boolean;
     isInitialized: boolean;
+    calendarInitialized?: boolean;
     error?: any;
 }
 export interface HookReturnValue extends HookState {
