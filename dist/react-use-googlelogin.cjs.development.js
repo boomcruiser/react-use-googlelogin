@@ -286,6 +286,41 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
       scope: SCOPES
     }).then(function () {
       console.log('calendar init');
+      var config = {
+        client_id: clientId,
+        cookie_policy: cookiePolicy,
+        hosted_domain: hostedDomain,
+        fetch_basic_profile: fetchBasicProfile,
+        ux_mode: uxMode,
+        redirect_uri: redirectUri,
+        scope: scope
+      };
+      window.gapi.auth2.init(config).then(function (auth2) {
+        var googleUser = auth2.currentUser.get();
+        var isSignedIn = googleUser.isSignedIn();
+        auth2.currentUser.listen(handleAuthChange);
+
+        if (!persist) {
+          signOut();
+          return;
+        }
+
+        if (isSignedIn) getAdditionalUserData(googleUser, fetchBasicProfile);
+        setState(_extends({}, state, {
+          googleUser: googleUser,
+          auth2: auth2,
+          isSignedIn: isSignedIn,
+          isInitialized: true
+        }));
+      }, function (err) {
+        setState(_extends({}, state, {
+          googleUser: undefined,
+          auth2: undefined,
+          isSignedIn: false,
+          isInitialized: false,
+          error: err
+        }));
+      });
       setState(_extends({}, state, {
         calendarInitialized: true
       }));
@@ -322,15 +357,6 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
   };
 
   useExternalScript(DOM_ID, GOOGLE_API_URL, function () {
-    var config = {
-      client_id: clientId,
-      cookie_policy: cookiePolicy,
-      hosted_domain: hostedDomain,
-      fetch_basic_profile: fetchBasicProfile,
-      ux_mode: uxMode,
-      redirect_uri: redirectUri,
-      scope: scope
-    };
     /**
      * According to Google's documentation:
      *
@@ -338,34 +364,7 @@ var useGoogleLogin = function useGoogleLogin(_ref) {
      * The GoogleAuth object returned implements the `then()` method which resolves with itself.
      * As a result, `Promise.resolve()` or `await` will cause infinite recursion.
      */
-
     var handleLoad = function handleLoad() {
-      window.gapi.auth2.init(config).then(function (auth2) {
-        var googleUser = auth2.currentUser.get();
-        var isSignedIn = googleUser.isSignedIn();
-        auth2.currentUser.listen(handleAuthChange);
-
-        if (!persist) {
-          signOut();
-          return;
-        }
-
-        if (isSignedIn) getAdditionalUserData(googleUser, fetchBasicProfile);
-        setState(_extends({}, state, {
-          googleUser: googleUser,
-          auth2: auth2,
-          isSignedIn: isSignedIn,
-          isInitialized: true
-        }));
-      }, function (err) {
-        setState(_extends({}, state, {
-          googleUser: undefined,
-          auth2: undefined,
-          isSignedIn: false,
-          isInitialized: false,
-          error: err
-        }));
-      });
       gapi.load('client:auth2', initClient);
     };
 
