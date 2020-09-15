@@ -232,6 +232,47 @@ export const useGoogleLogin = ({
       .then(
         function() {
           console.log('calendar init')
+          const config: gapi.auth2.ClientConfig = {
+            client_id: clientId,
+            cookie_policy: cookiePolicy,
+            hosted_domain: hostedDomain,
+            fetch_basic_profile: fetchBasicProfile,
+            ux_mode: uxMode,
+            redirect_uri: redirectUri,
+            scope,
+          }
+          window.gapi.auth2.init(config).then(
+            auth2 => {
+              const googleUser = auth2.currentUser.get()
+              const isSignedIn = googleUser.isSignedIn()
+              auth2.currentUser.listen(handleAuthChange)
+
+              if (!persist) {
+                signOut()
+                return
+              }
+
+              if (isSignedIn)
+                getAdditionalUserData(googleUser, fetchBasicProfile)
+              setState({
+                ...state,
+                googleUser,
+                auth2,
+                isSignedIn,
+                isInitialized: true,
+              })
+            },
+            (err: any) => {
+              setState({
+                ...state,
+                googleUser: undefined,
+                auth2: undefined,
+                isSignedIn: false,
+                isInitialized: false,
+                error: err,
+              })
+            }
+          )
           setState({ ...state, calendarInitialized: true })
         },
         function(error) {
@@ -274,16 +315,6 @@ export const useGoogleLogin = ({
   }
 
   useExternalScript(DOM_ID, GOOGLE_API_URL, () => {
-    const config: gapi.auth2.ClientConfig = {
-      client_id: clientId,
-      cookie_policy: cookiePolicy,
-      hosted_domain: hostedDomain,
-      fetch_basic_profile: fetchBasicProfile,
-      ux_mode: uxMode,
-      redirect_uri: redirectUri,
-      scope,
-    }
-
     /**
      * According to Google's documentation:
      *
@@ -292,37 +323,6 @@ export const useGoogleLogin = ({
      * As a result, `Promise.resolve()` or `await` will cause infinite recursion.
      */
     const handleLoad = () => {
-      window.gapi.auth2.init(config).then(
-        auth2 => {
-          const googleUser = auth2.currentUser.get()
-          const isSignedIn = googleUser.isSignedIn()
-          auth2.currentUser.listen(handleAuthChange)
-
-          if (!persist) {
-            signOut()
-            return
-          }
-
-          if (isSignedIn) getAdditionalUserData(googleUser, fetchBasicProfile)
-          setState({
-            ...state,
-            googleUser,
-            auth2,
-            isSignedIn,
-            isInitialized: true,
-          })
-        },
-        (err: any) => {
-          setState({
-            ...state,
-            googleUser: undefined,
-            auth2: undefined,
-            isSignedIn: false,
-            isInitialized: false,
-            error: err,
-          })
-        }
-      )
       gapi.load('client:auth2', initClient)
     }
 
